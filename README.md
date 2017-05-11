@@ -15,7 +15,7 @@ Available variables are listed below, along with default values (see `defaults/m
 
 ## Virtual Hosts 
 
-```
+```yaml
     nginx_vhosts:
       - listen: "0.0.0.0"
         server_name: "example.com"
@@ -31,7 +31,7 @@ Available variables are listed below, along with default values (see `defaults/m
 ```
 This will create a vhost using php fpm socket and ssl certificates which are expected in {{ nginx_tls_cert_path }} please note that the default ciphers are hardened for security not compatiblity. 
 
-```    
+```yaml 
    nginx_vhosts:
     - listen: "0.0.0.0"
       server_name: "proxy.example.com"
@@ -50,7 +50,7 @@ This will create a vhost using php fpm socket and ssl certificates which are exp
 ```
 This example shows a vhost configuration with proxy configuration for two locations
 
-```
+```yaml
    nginx_vhosts:
     - listen: "0.0.0.0"
       server_name: "proxy.example.com"
@@ -70,7 +70,7 @@ This example shows a vhost configuration with proxy configuration for two locati
 ```
 This example creates a vhost with modifier ~ and regex for dening access to several uris
 
-```
+```yaml
    nginx_vhosts:
     - listen: "0.0.0.0"
       server_name: "proxy.example.com"
@@ -97,12 +97,12 @@ This example creates a vhost with modifier ~ and regex for dening access to seve
 ````
 Generate a vhost passing requests to php-fpm using custom headers for the proxy and the /content/ location.
 
-```
+```yaml
     nginx_remove_default_vhost: false
 ```
 Whether to remove the 'default' virtualhost configuration supplied by Nginx. Useful if you want the base `/` URL to be directed at one of your own virtual hosts configured in a separate .conf file.
 
-```
+```yaml
     nginx_install_php_fpm: True
     nginx_php_version: '7.0'
     nginx_php_dependencies:
@@ -119,12 +119,12 @@ Install php-fpm and configure a upstream
 
 
 ## Nginx System parameters
-```
+```yaml
     nginx_user: "nginx"
 ```
 The user under which Nginx will run. Defaults to `nginx` for RedHat, and `www-data` for Debian.
 
-```
+```yaml
     nginx_worker_processes: "1"
     nginx_worker_connections: "1024"
     nginx_multi_accept: "off"
@@ -133,7 +133,7 @@ The user under which Nginx will run. Defaults to `nginx` for RedHat, and `www-da
 ```
 Configuration of the default error and access logs. Set to `off` to disable a log entirely.
 
-```
+```yaml
     nginx_sendfile: "on"
     nginx_tcp_nopush: "on"
     nginx_tcp_nodelay: "on"
@@ -146,22 +146,26 @@ Configuration of the default error and access logs. Set to `off` to disable a lo
 ```
 Extra lines to be inserted in the top-level `http` block in `nginx.conf`. The value should be defined literally (as you would insert it directly in the `nginx.conf`, adhering to the Nginx configuration syntax - such as `;` for line termination, etc.), for example:
 
-```
+```yaml
     nginx_ppa_use: false
     nginx_ppa_version: stable
 ```
 (For Ubuntu only) Allows you to use the official Nginx PPA instead of the system's package. You can set the version to `stable` or `development`.
+
+## ToDo
+* Add installation of nginx from source
+* add passenger upstream for gitlab installations
 
 ## Dependencies
 
 None.
 
 ## Example Playbook
-
+```yaml
     - hosts: server
       roles:
         - { role: raben2.nginx }
-
+```
 ## License
 
 LGPL
