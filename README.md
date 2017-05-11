@@ -25,6 +25,10 @@ Available variables are listed below, along with default values (see `defaults/m
         port: 80
         access_log: ""
         error_log: ""
+        cgi_params: 
+          - 'fastcgi_split_path_info ^(.+\.php)(/.*)$' 
+          - 'include fastcgi_params'
+          - 'fastcgi_pass {{ nginx_php_fpm_upstream_name }}'
         ssl: true
         crt: example.com-cert.pem
         key: example.com-key.pem
