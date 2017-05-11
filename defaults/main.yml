@@ -13,6 +13,13 @@ nginx_php_version: '7.0'
 nginx_php_dependencies: []
 nginx_php_socket: "{{ nginx_pid_path }}/php/php{{ nginx_php_version }}-fpm.sock"
 nginx_php_fpm_upstream_name: php-fpm
+
+# Install passenger
+nginx_install_passenger: false
+nginx_passenger_apt_key: 561F9B9CAC40B2F7
+nginx_passenger_apt_url: https://oss-binaries.phusionpassenger.com/apt/passenger
+nginx_passenger_apt_pkgs: ['nginx-extras', 'passenger', 'ruby', 'ruby-dev']
+
 # Server config
 nginx_listen_address: 0.0.0.0
 

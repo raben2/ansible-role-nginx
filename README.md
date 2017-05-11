@@ -106,6 +106,7 @@ Generate a vhost passing requests to php-fpm using custom headers for the proxy 
 ```
 Whether to remove the 'default' virtualhost configuration supplied by Nginx. Useful if you want the base `/` URL to be directed at one of your own virtual hosts configured in a separate .conf file.
 
+## PHP-FPM
 ```yaml
     nginx_install_php_fpm: True
     nginx_php_version: '7.0'
@@ -121,6 +122,10 @@ Whether to remove the 'default' virtualhost configuration supplied by Nginx. Use
 ```
 Install php-fpm and configure a upstream
 
+## Passenger
+```yaml
+    nginx_install_passenger: True
+```
 
 ## Nginx System parameters
 ```yaml
@@ -156,9 +161,6 @@ Extra lines to be inserted in the top-level `http` block in `nginx.conf`. The va
 ```
 (For Ubuntu only) Allows you to use the official Nginx PPA instead of the system's package. You can set the version to `stable` or `development`.
 
-## ToDo
-* Add installation of nginx from source
-* add passenger upstream for gitlab installations
 
 ## Dependencies
 
