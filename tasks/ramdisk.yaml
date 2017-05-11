@@ -1,0 +1,12 @@
+- file:
+    path: "{{ nginx_proxy_cache_path }}"
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: 0775 
+- mount: 
+   name: "{{ nginx_proxy_cache_path }}"
+   fstype: tmpfs
+   src: tmpfs
+   opts: 'size={{ nginx_cache_size }}g'
+   state: mounted

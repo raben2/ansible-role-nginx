@@ -1,0 +1,133 @@
+{% if vhost.proxy_zone is defined %}
+proxy_cache_path {{ nginx_proxy_cache_path }}/{{ vhost.proxy_zone }} {{ proxy_cache_params_a }} keys_zone={{ vhost.proxy_zone }}:{{ proxy_cache_params_b }};
+{% endif %}
+server {
+    listen {{ vhost.listen }}:{{ vhost.port }};
+{% if vhost.return is defined %}
+        return {{ vhost.return }};
+{% endif %}
+{% if vhost.server_name is defined %}
+        server_name {% if vhost.server_alias is defined %} {{ vhost.server_alias }} {% endif %}{{ vhost.server_name }};
+{% endif %}
+{% if vhost.ssl %}
+        ssl on;
+        ssl_certificate {{ nginx_tls_cert_path }}/{{ vhost.crt }};
+        ssl_certificate_key {{ nginx_tls_cert_path }}/{{ vhost.key }};
+        ssl_ciphers "{{ nginx_tls_ciphers }}";
+        ssl_prefer_server_ciphers on;
+        ssl_protocols {{ nginx_tls_protocols }};
+{% if vhost.client_crt is defined %}
+{% for crt in vhost.client_crt %}
+        ssl_client_certificate {{ nginx_tls_cert_path }}/{{ vhost.client_crt }};
+{% endfor %}
+        ssl_verify_client on;
+{% endif %}
+{% endif %}
+        root {{ vhost.root }};
+{% if vhost.proxy_pass is defined %}
+    location {{ vhost.root }} {
+{% endif %}
+{% if vhost.auth_file is defined %}
+        auth_basic "{{ nginx_auth_message }};
+        auth_basic_user_file {{ nginx_auth_path }}/{{ vhost.auth_file }}.htpasswd;
+{% endif %}
+{% if vhost.return is undefined %}
+{% if vhost.autoindex is defined %}
+        autoindex on;
+        default_type text/plain;
+{% else %}
+        index {{ vhost.index | default('index.html index.htm') }};
+{% endif %}
+        charset {{ nginx_charset }};
+{% if vhost.add_header is defined %}
+{% for header in vhost.add_header %}
+        add_header {{ header }};
+{% endfor %}
+{% endif %}
+{% if vhost.gzip is defined %}
+        gzip {{ vhost.gzip }};
+{% endif %}
+{% if vhost.cgi_params is defined %}
+{% for param in vhost.cgi_params %}
+        {{ param }};
+{% endfor %}
+{% endif %}
+{% if vhost.upload_size is defined %}
+        client_max_body_size {{ vhost.upload_size }};
+{% endif %}
+{% if vhost.proxy_zone is defined %}
+        proxy_cache_valid {{ proxy_cache_4x_valid }};
+        proxy_cache_valid {{ proxy_cache_2x_valid }};
+        proxy_cache_revalidate on;
+        proxy_cache_min_uses 5;
+        proxy_cache_lock on;
+{% if vhost.cache_bypass is defined %}
+        proxy_cache_bypass {{ vhost.cache_bypass }};
+{% endif %}
+        proxy_cache {{ vhost.proxy_zone }};
+        expires $expires;
+        add_header Pragma "public";
+        add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+{% endif %}
+{% if vhost.proxy_pass is defined %}
+        proxy_pass {{ vhost.proxy_pass }};
+        proxy_redirect off;
+{% endif %}
+{% if vhost.location is defined %}
+{% for item in vhost.location %}
+{% if item.modifier and item.regex == 'none' %}
+    location {{ item.uri }} {
+{% elif item.regex and item.modifier != 'none' %}
+    location {{ item.modifier }} {{ item.uri }}{{ item.regex }} {
+{% else %}
+    location {{ item.modifier }} {{ item.uri }} {
+{% endif %}
+{% if item.auth_file is defined %}
+        auth_basic "{{ nginx_auth_message }};
+        auth_basic_user_file {{ nginx_auth_path }}/{{ vhost.auth_file }}.htpasswd;
+{% endif %}
+{% if item.extra_params is defined %}
+{% for param in item.extra_params %}
+        {{ param }};
+{% endfor %}
+{% endif %}
+{% if item.add_header is defined %}
+{% for header in item.add_header %}
+        add_header {{ header }};
+{% endfor %}
+{% endif %}
+{% if item.proxy_pass is defined %}
+        proxy_pass {{ item.proxy_pass }};
+        proxy_redirect off;
+{% if item.proxy_zone is defined %}
+        proxy_cache_valid {{ proxy_cache_4x_valid }};
+        proxy_cache_valid {{ proxy_cache_2x_valid }};
+        proxy_cache_revalidate on;
+        proxy_cache_min_uses 5;
+        proxy_cache_lock on;
+{% endif %}
+{% if item.cache_bypass is defined %}
+        proxy_cache_bypass {{ item.cache_bypass }};
+{% endif %}
+{% endif %}
+    }
+{% endfor %}
+{% endif %}
+
+{% if vhost.error_page is defined %}
+    error_page {{ vhost.error_page }};
+{% endif %}
+{% if vhost.access_log is defined %}
+    access_log {{ vhost.access_log }};
+{% endif %}
+{% if vhost.error_log is defined %}
+    error_log {{ vhost.error_log }} error;
+{% endif %}
+{% if vhost.extra_parameters is defined %}
+    {{ vhost.extra_parameters }}
+{% endif %}
+{% if vhost.proxy_pass is defined %}
+    }
+{% endif %}
+{% endif %}
+}

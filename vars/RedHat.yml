@@ -1,0 +1,10 @@
+---
+root_group: root
+nginx_conf_path: /etc/nginx/conf.d
+nginx_pid_path: /var/run
+nginx_conf_file_path: /etc/nginx/nginx.conf
+nginx_mime_file_path: /etc/nginx/mime.types
+nginx_pidfile: "{{ nginx_pid_path }}/nginx.pid"
+nginx_vhost_path: /etc/nginx/conf.d
+nginx_default_vhost_path: /etc/nginx/conf.d/default.conf
+__nginx_user: "nginx"

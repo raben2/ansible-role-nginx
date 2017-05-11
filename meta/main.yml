@@ -1,0 +1,29 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Georg Rabenstein @raben2
+  description: Nginx installation for Linux and FreeBSD.
+  license: LGPL
+  min_ansible_version: 2.1
+  platforms:
+    - name: EL
+      versions:
+      - 6
+      - 7
+    - name: Debian
+      versions:
+      - all
+    - name: Ubuntu
+      versions:
+      - all
+    - name: FreeBSD
+      versions:
+      - 10.3
+      - 10.2
+      - 10.1
+      - 10.0
+      - 9.3
+  galaxy_tags:
+    - development
+    - web

@@ -1,0 +1,29 @@
+---
+- name: Enable nginx repo.
+  template:
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Ensure nginx is installed.
+  yum:
+    name: "{{ nginx_package_name }}"
+    state: installed
+    enablerepo: nginx
+
+- name: allow proxy to connect network
+  seboolean:
+     name: httpd_can_network_connect
+     persistent: yes
+     state: yes
+     
+- name: check semanage http_port_t
+  seport: 
+    ports: "{{ http_ports_t }}"
+    setype: http_port_t
+    state: present
+    proto: tcp
+  notify:
+    - enable nginx

@@ -1,0 +1,81 @@
+---
+# Used only for Debian/Ubuntu installation, as the -t option for apt.
+nginx_default_release: ""
+# Use the official Nginx PPA for Ubuntu, and the version to use if so.
+nginx_ppa_use: false
+nginx_ppa_version: stable
+# The name of the nginx apt/yum package to install.
+nginx_package_name: "nginx"
+
+# Install php-fpm if needed
+nginx_install_php_fpm: false
+nginx_php_version: '7.0'
+nginx_php_dependencies: []
+nginx_php_socket: "{{ nginx_pid_path }}/php/php{{ nginx_php_version }}-fpm.sock"
+nginx_php_fpm_upstream_name: php-fpm
+# Server config
+nginx_listen_address: 0.0.0.0
+
+nginx_worker_processes: "1"
+nginx_worker_connections: "256"
+nginx_multi_accept: "off"
+nginx_error_log: "/var/log/nginx/error.log warn"
+nginx_access_log: "/var/log/nginx/access.log main buffer=16k"
+http_ports_t: "80, 81, 443, 488, 8008-8499, 9000"
+nginx_sendfile: "on"
+nginx_tcp_nopush: "on"
+nginx_tcp_nodelay: "on"
+nginx_keepalive_timeout: "65"
+nginx_keepalive_requests: "100"
+nginx_client_max_body_size: "64m"
+nginx_charset: utf-8
+# basic auth
+nginx_auth_message: "Please log in to see this page"
+nginx_auth_path: /etc/nginx/htpasswd
+# TLS
+nginx_tls_cert_path: "/etc/nginx/certs"
+nginx_tls_ciphers: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+nginx_tls_protocols: "TLSv1.1 TLSv1.2"
+nginx_server_names_hash_bucket_size: "64"
+# Caching
+nginx_cache_tmpfs: False
+cache_tmpfs: "{{ nginx_cache_tmpfs }}"
+nginx_proxy_cache_path: "/var/cache/nginx"
+nginx_cache_size: 1G
+proxy_cache_params: ""
+proxy_cache_key: "$request_method$host$request_uri$scheme"
+proxy_cache_4x_valid: "404 403 405 400 1m"
+proxy_cache_2x_valid: "200 201 202 302 206 30m"
+# Proxy Headers
+proxy_headers:
+  - "Host $host"
+  - "X-Forwarded-Host $host"
+  - "X-Forwarded-Server $host"
+  - "X-Real-IP $remote_addr"
+  - "X-Forwarded-For $remote_addr"
+nginx_extra_conf_options: ""
+# Example extra main options, used within the main nginx's context:
+#   nginx_extra_conf_options: |
+#     env VARIABLE;
+#     include /etc/nginx/main.d/*.conf;
+
+nginx_extra_http_options: ""
+# Example extra http options, printed inside the main server http config:
+#    nginx_extra_http_options: |
+#      proxy_buffering    off;
+#      proxy_set_header   X-Real-IP $remote_addr;
+#      proxy_set_header   X-Scheme $scheme;
+#      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+#      proxy_set_header   Host $http_host;
+
+nginx_remove_default_vhost: false
+nginx_vhosts: []
+
+nginx_upstreams: []
+# - name: myapp1
+#   strategy: "ip_hash" # "least_conn", etc.
+#   servers: {
+#     "srv1.example.com",
+#     "srv2.example.com weight=3",
+#     "srv3.example.com"
+#   }
