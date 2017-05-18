@@ -78,6 +78,30 @@ nginx_extra_http_options: ""
 nginx_remove_default_vhost: false
 nginx_vhosts: []
 
+nginx_maps: []
+#   - from: "$sent_http_content_type"
+#     to: "$expires"
+#     args:
+#       - 'default   off'
+#       - 'application/pdf   30d'
+#       - 'application/jpg   30d'
+#       - 'application/jpeg  30d'
+#       - 'application/gif   30d'
+#       - 'application/png   30d'
+#       - 'application/gz    30d'
+#       - 'application/zip   30d'
+#       - 'application/wmv   30d'
+#       - 'application/avi   30d'
+#       - 'application/css   30d'
+#       - 'application/ico   30d'
+#       - 'application/mpeg  30d'
+#       - 'application/txt   30d'
+#       - 'application/mp3   30d'
+#       - 'application/js    30d'
+#       - 'text/css          30d'
+#       - 'text/javascript   30d'
+#       - 'application/octet-stream 30'
+
 nginx_upstreams: []
 # - name: myapp1
 #   strategy: "ip_hash" # "least_conn", etc.

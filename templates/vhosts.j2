@@ -44,6 +44,24 @@ server {
         add_header {{ header }};
 {% endfor %}
 {% endif %}
+{% if vhost.proxy_add_header is defined %}
+{% for header in vhost.proxy_add_header %}
+        proxy_set_header {{ header }};
+{% endfor %}
+{% endif %}
+{% if vhost.passenger_env is defined %}
+        passenger_env_var PATH {{ vhost.passenger_env.path }};
+        passenger_user {{ vhost.passenger_env.user }};
+        passenger_group {{ vhost.passenger_env.group }};
+        passenger_ruby /usr/bin/ruby;
+        passenger_enabled on;
+        passenger_min_instances 1;
+{% endif %}
+{% if vhost.error_pages is defined %}
+{% for page in vhost.error_pages %}
+        error_page {{ page }};
+{% endfor %}
+{% endif %}
 {% if vhost.gzip is defined %}
         gzip {{ vhost.gzip }};
 {% endif %}
@@ -76,41 +94,44 @@ server {
 {% if vhost.location is defined %}
 {% for item in vhost.location %}
 {% if item.modifier and item.regex == 'none' %}
-    location {{ item.uri }} {
+        location {{ item.uri }} {
 {% elif item.regex and item.modifier != 'none' %}
-    location {{ item.modifier }} {{ item.uri }}{{ item.regex }} {
+        location {{ item.modifier }} {{ item.uri }}{{ item.regex }} {
 {% else %}
-    location {{ item.modifier }} {{ item.uri }} {
+        location {{ item.modifier }} {{ item.uri }} {
 {% endif %}
 {% if item.auth_file is defined %}
-        auth_basic "{{ nginx_auth_message }};
-        auth_basic_user_file {{ nginx_auth_path }}/{{ vhost.auth_file }}.htpasswd;
+            auth_basic "{{ nginx_auth_message }};
+            auth_basic_user_file {{ nginx_auth_path }}/{{ vhost.auth_file }}.htpasswd;
 {% endif %}
 {% if item.extra_params is defined %}
 {% for param in item.extra_params %}
-        {{ param }};
+            {{ param }};
 {% endfor %}
+{% endif %}
+{% if item.root is defined %}
+            root {{ item.root }};
 {% endif %}
 {% if item.add_header is defined %}
 {% for header in item.add_header %}
-        add_header {{ header }};
+            add_header {{ header }};
 {% endfor %}
 {% endif %}
 {% if item.proxy_pass is defined %}
-        proxy_pass {{ item.proxy_pass }};
-        proxy_redirect off;
+            proxy_pass {{ item.proxy_pass }};
+            proxy_redirect off;
 {% if item.proxy_zone is defined %}
-        proxy_cache_valid {{ proxy_cache_4x_valid }};
-        proxy_cache_valid {{ proxy_cache_2x_valid }};
-        proxy_cache_revalidate on;
-        proxy_cache_min_uses 5;
-        proxy_cache_lock on;
+            proxy_cache_valid {{ proxy_cache_4x_valid }};
+            proxy_cache_valid {{ proxy_cache_2x_valid }};
+            proxy_cache_revalidate on;
+            proxy_cache_min_uses 5;
+            proxy_cache_lock on;
 {% endif %}
 {% if item.cache_bypass is defined %}
-        proxy_cache_bypass {{ item.cache_bypass }};
+            proxy_cache_bypass {{ item.cache_bypass }};
 {% endif %}
 {% endif %}
-    }
+        }
 {% endfor %}
 {% endif %}
 

@@ -37,18 +37,13 @@ http {
 
     gzip  on;
     proxy_cache_key {{ proxy_cache_key }};
-    map $request_method $purge_method {
-         PURGE 1;
-         default 0;
+{% for item in nginx_maps %}
+    map {{ item.from }} {{ item.to }} {
+{% for arg in item.args %}
+        {{ arg }};
+{% endfor %}
     }
-    geo $purge_allowed {
-    default 0;
-    127.0.0.1/32 1;
-    }
-    map $request_method $purge_method {
-       PURGE   $purge_allowed;
-       default 0;
-    }
+{% endfor %}
 
 {% if nginx_extra_http_options %}
     {{ nginx_extra_http_options }}
@@ -64,29 +59,6 @@ http {
 {% endfor %}
     }
 {% endfor %}
-     map $sent_http_content_type $expires {
-        default   off;
-        application/pdf   30d;
-        application/jpg   30d;
-        application/jpeg  30d;
-        application/gif   30d;
-        application/png   30d;
-        application/gz    30d;
-        application/zip   30d;
-        application/wmv   30d;
-        application/avi   30d;
-        application/css   30d;
-        application/ico   30d;
-        application/mpeg  30d;
-        application/txt   30d;
-        application/mp3   30d;
-        application/js    30d;
-        text/css          30d;
-        text/javascript   30d;
-        application/octet-stream 30d;
-
-   }
-
     include {{ nginx_conf_path }}/*.conf;
 {% if nginx_conf_path != nginx_vhost_path %}
     include {{ nginx_vhost_path }}/*;
