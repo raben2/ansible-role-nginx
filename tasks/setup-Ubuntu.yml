@@ -12,3 +12,28 @@
     name: nginx
     state: absent
   when: nginx_ppa_added.changed
+- name: install passenger apt key
+  apt_key:
+    state: present
+    keyserver: keyserver.ubuntu.com
+    id: "{{ nginx_passenger_apt_key }}"
+  when: nginx_install_passenger
+- name: add passenger repo
+  apt_repository:
+    repo: "deb {{ nginx_passenger_apt_url }} {{ ansible_distribution_release }} main"
+    state: present
+  when: nginx_install_passenger 
+- name: install passenger and extras
+  apt: 
+    state: installed
+    name: "{{ item }}"
+  with_items:
+    - "{{ nginx_passenger_apt_pkgs }}"
+- name: install php and modules
+  apt:
+    name: "php-{{ item }}"
+    state: installed
+  with_items:
+    - "{{ nginx_php_dependencies }}"
+    - fpm
+  when: nginx_install_php_fpm
